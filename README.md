@@ -17,40 +17,54 @@ A Node.js/Express API for managing products and inventory using DynamoDB via Loc
 
 ## Getting Started
 
-### 1. Clone the repository
+### Recommended: Docker Compose (Best for Local Development)
+```bash
+git clone git@github.com:nickstaggs/sample-inventory-service.git
+cd product-inventory-api
+docker-compose up
+```
+
+This will:
+1. Start LocalStack (DynamoDB) in a container
+2. Build and start the API in a container
+3. Automatically initialize the database tables
+4. Make the API available at `http://localhost:3000`
+
+### Alternative: Manual Setup (For Advanced Use Cases)
+1. Clone the repository:
 ```bash
 git clone git@github.com:nickstaggs/sample-inventory-service.git
 cd product-inventory-api
 ```
 
-### 2. Install dependencies
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-### 3. Start the application
+3. Start LocalStack (in a separate terminal):
 ```bash
-docker-compose up
+docker-compose up localstack
 ```
 
-The API will be available at `http://localhost:3000`
+4. Initialize database:
+```bash
+npm run init-db
+```
 
-## Development
-
-### Running locally
+5. Run the API:
 ```bash
 npm run dev
 ```
 
-### Building for production
-```bash
-npm run build
-```
+## Development Commands
 
-### Initializing the database
-```bash
-npm run init-db
-```
+| Command | Description |
+|---------|-------------|
+| `docker-compose up` | Start everything (recommended) |
+| `npm run dev` | Run API in dev mode (manual setup) |
+| `npm run build` | Build production assets |
+| `npm run init-db` | Initialize database tables |
 
 ## API Documentation
 
