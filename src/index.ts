@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { DynamoDBAdapter } from './shared/database/dynamodb';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 
 // Configure AWS SDK for LocalStack
 const dynamoDBConfig = {
