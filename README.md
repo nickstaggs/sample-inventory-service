@@ -19,7 +19,7 @@ A Node.js/Express API for managing products and inventory using DynamoDB via Loc
 
 ### 1. Clone the repository
 ```bash
-git clone <repository-url>
+git clone git@github.com:nickstaggs/sample-inventory-service.git
 cd product-inventory-api
 ```
 
