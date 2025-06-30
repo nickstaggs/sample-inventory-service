@@ -6,9 +6,9 @@ export class DynamoDBAdapter<T extends { id: string }> implements DatabaseClient
   private client: DynamoDBDocumentClient;
   private tableName: string;
 
-  constructor(tableName: string) {
+  constructor(tableName: string, config?: any) {
     this.tableName = tableName;
-    this.client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+    this.client = DynamoDBDocumentClient.from(new DynamoDBClient(config || {}));
   }
 
   async get(id: string): Promise<T | undefined> {

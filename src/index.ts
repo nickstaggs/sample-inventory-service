@@ -2,6 +2,17 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { DynamoDBAdapter } from './shared/database/dynamodb';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+
+// Configure AWS SDK for LocalStack
+const dynamoDBConfig = {
+  endpoint: process.env.AWS_ENDPOINT || 'http://localhost:4566',
+  region: process.env.AWS_REGION || 'us-east-1',
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'test',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'test'
+  }
+};
 import { Product } from './shared/types';
 import { InventoryItem } from './shared/types';
 import { ProductService } from './products/service';
@@ -12,9 +23,9 @@ import inventoryRoutes from './inventory/routes';
 const app = express();
 const PORT = 3000;
 
-// Initialize database adapters
-const productDB = new DynamoDBAdapter<Product>('Products');
-const inventoryDB = new DynamoDBAdapter<InventoryItem>('Inventory');
+// Initialize database adapters with LocalStack config
+const productDB = new DynamoDBAdapter<Product>('Products', dynamoDBConfig);
+const inventoryDB = new DynamoDBAdapter<InventoryItem>('Inventory', dynamoDBConfig);
 
 // Initialize services
 const productService = new ProductService(productDB);
