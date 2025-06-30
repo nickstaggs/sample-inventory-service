@@ -1,17 +1,19 @@
 import { Router } from 'express';
-import { InventoryItem } from '../shared/types';
-import inventoryService from './service';
+import { InventoryService } from './service';
+import { asyncHandler } from '../shared/utils';
 
-const router = Router();
+export default (inventoryService: InventoryService) => {
+  const router = Router();
 
-router.get('/:productId', (req, res) => {
-  const inventory = inventoryService.getInventoryForProduct(req.params.productId);
-  res.json(inventory);
-});
+  router.get('/:productId', asyncHandler(async (req, res) => {
+    const inventory = await inventoryService.getInventoryForProduct(req.params.productId);
+    res.json(inventory);
+  }));
 
-router.post('/', (req, res) => {
-  const newInventory = inventoryService.updateInventory(req.body);
-  res.status(201).json(newInventory);
-});
+  router.post('/', asyncHandler(async (req, res) => {
+    const newInventory = await inventoryService.updateInventory(req.body);
+    res.status(201).json(newInventory);
+  }));
 
-export default router;
+  return router;
+};

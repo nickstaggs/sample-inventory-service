@@ -1,28 +1,28 @@
 import { Router } from 'express';
-import { Product } from '../shared/types';
-import productService from './service';
+import { ProductService } from './service';
+import { asyncHandler } from '../shared/utils';
 
-const router = Router();
+export default (productService: ProductService) => {
+  const router = Router();
 
-// Temporary in-memory storage
-const products: Product[] = [];
+  router.get('/', asyncHandler(async (req, res) => {
+    const products = await productService.getAllProducts();
+    res.json(products);
+  }));
 
-router.get('/', (req, res) => {
-  res.json(productService.getAllProducts());
-});
+  router.post('/', asyncHandler(async (req, res) => {
+    const newProduct = await productService.createProduct(req.body);
+    res.status(201).json(newProduct);
+  }));
 
-router.post('/', (req, res) => {
-  const newProduct = productService.createProduct(req.body);
-  res.status(201).json(newProduct);
-});
+  router.get('/:id', asyncHandler(async (req, res) => {
+    const product = await productService.getProductById(req.params.id);
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(404).send('Product not found');
+    }
+  }));
 
-router.get('/:id', (req, res) => {
-  const product = productService.getProductById(req.params.id);
-  if (product) {
-    res.json(product);
-  } else {
-    res.status(404).send('Product not found');
-  }
-});
-
-export default router;
+  return router;
+};

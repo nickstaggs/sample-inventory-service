@@ -1,29 +1,29 @@
 import { InventoryItem } from '../shared/types';
+import { DatabaseClient } from '../shared/database.interface';
 
-const inventory: InventoryItem[] = [];
+export class InventoryService {
+  constructor(private db: DatabaseClient<InventoryItem>) {}
 
-export default {
-  getInventoryForProduct(productId: string): InventoryItem | undefined {
-    return inventory.find(i => i.productId === productId);
-  },
+  async getInventoryForProduct(productId: string): Promise<InventoryItem | undefined> {
+    const items = await this.db.getAll();
+    return items.find(i => i.productId === productId);
+  }
 
-  updateInventory(item: Omit<InventoryItem, 'lastUpdated'>): InventoryItem {
-    const existingIndex = inventory.findIndex(i => i.productId === item.productId);
+  async updateInventory(item: Omit<InventoryItem, 'lastUpdated'>): Promise<InventoryItem> {
     const now = new Date();
+    const existing = await this.getInventoryForProduct(item.productId);
     
-    if (existingIndex >= 0) {
-      inventory[existingIndex] = {
+    if (existing) {
+      return this.db.update(existing.productId, {
         ...item,
         lastUpdated: now
-      };
-      return inventory[existingIndex];
+      });
     } else {
       const newItem: InventoryItem = {
         ...item,
         lastUpdated: now
       };
-      inventory.push(newItem);
-      return newItem;
+      return this.db.create(newItem);
     }
   }
-};
+}
