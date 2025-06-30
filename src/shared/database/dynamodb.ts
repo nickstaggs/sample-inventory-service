@@ -1,10 +1,12 @@
 import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand, UpdateCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DatabaseClient } from '../database.interface';
+import { v4 as uuidv4 } from 'uuid';
+import { WithId } from "../types";
 
-export class DynamoDBAdapter<T extends { id: string }> implements DatabaseClient<T> {
+export class DynamoDBAdapter<T extends WithId> implements DatabaseClient<T> {
   private client: DynamoDBDocumentClient;
-  private tableName: string;
+  private readonly tableName: string;
 
   constructor(tableName: string, config?: any) {
     this.tableName = tableName;
@@ -26,8 +28,13 @@ export class DynamoDBAdapter<T extends { id: string }> implements DatabaseClient
     return Items as T[] || [];
   }
 
-  async create(item: Omit<T, 'id'>): Promise<T> {
-    const newItem = { ...item, id: Date.now().toString() } as T;
+  async create(item: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
+    const newItem = {
+      ...item,
+      id: uuidv4(),
+      createdAt: Date.now().toString(),
+      updatedAt: Date.now().toString()
+    } as unknown as T;
     await this.client.send(new PutCommand({
       TableName: this.tableName,
       Item: newItem

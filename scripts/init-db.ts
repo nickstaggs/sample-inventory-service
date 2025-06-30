@@ -21,11 +21,7 @@ async function createTable(tableName: string, key: string) {
     await client.send(command);
     console.log(`Created table ${tableName}`);
   } catch (err) {
-    if (err.name === 'ResourceInUseException') {
-      console.log(`Table ${tableName} already exists`);
-    } else {
-      console.error(`Error creating table ${tableName}:`, err);
-    }
+    console.log(err);
   }
 }
 

@@ -1,14 +1,26 @@
-export interface Product {
+export interface Product extends WithId, WithAuditFields {
   id: string;
   name: string;
   description: string;
   price: number;
   category: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface InventoryItem {
+export interface InventoryItem extends WithId, WithAuditFields {
+  id: string;
   productId: string;
   quantity: number;
-  location: string;
-  lastUpdated: Date;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WithId {
+  id: string;
+}
+
+export interface WithAuditFields {
+  createdAt: string;
+  updatedAt: string;
 }

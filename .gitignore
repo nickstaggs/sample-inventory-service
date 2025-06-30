@@ -1,0 +1,7 @@
+/volume/
+/.aider.chat.history.md
+/.aider.input.history
+/node_modules/
+/dist/
+/.aider.tags.cache.v4/
+/localstack/

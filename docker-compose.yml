@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build: .
@@ -21,18 +19,17 @@ services:
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=dynamodb
-      - DEFAULT_REGION=us-east-1
+      - SERVICES=dynamodb,s3
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_DEFAULT_REGION=us-east-1
-      - EDGE_PORT=4566
       - DEBUG=1
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4566/health"]
-      interval: 5s
+      test: .venv/bin/localstack status services --format=json
+      start_period: 15s
+      interval: 10s
       timeout: 10s
-      retries: 5
+      retries: 3
     volumes:
-      - ./localstack:/tmp/localstack
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - /var/run/docker.sock:/var/run/docker.sock

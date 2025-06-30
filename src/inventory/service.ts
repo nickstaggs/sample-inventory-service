@@ -9,21 +9,15 @@ export class InventoryService {
     return items.find(i => i.productId === productId);
   }
 
-  async updateInventory(item: Omit<InventoryItem, 'lastUpdated'>): Promise<InventoryItem> {
-    const now = new Date();
+  async updateInventory(item: Omit<InventoryItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<InventoryItem> {
     const existing = await this.getInventoryForProduct(item.productId);
     
     if (existing) {
       return this.db.update(existing.productId, {
-        ...item,
-        lastUpdated: now
+        ...item
       });
     } else {
-      const newItem: InventoryItem = {
-        ...item,
-        lastUpdated: now
-      };
-      return this.db.create(newItem);
+      return this.db.create(item);
     }
   }
 }
