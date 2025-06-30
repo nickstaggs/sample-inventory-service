@@ -65,12 +65,39 @@ npm run init-db
     "initialQuantity": 100  // optional, defaults to 0
   }
   ```
+  
+Example inventory update:
+```json
+{
+  "productId": "12345",
+  "quantity": 100,
+  "location": "Warehouse A"
+}
+```
 - `GET /api/products` - List all products
 - `GET /api/products/:id` - Get product details
 
 ### Inventory
 - `POST /api/inventory` - Update inventory (creates if doesn't exist)
+  ```json
+  {
+    "productId": "string (required)",
+    "quantity": "number (required)",
+    "location": "string (required)"
+  }
+  ```
 - `GET /api/inventory/:productId` - Get inventory for product
+  Returns:
+  ```json
+  {
+    "id": "string",
+    "productId": "string",
+    "quantity": "number",
+    "location": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+  ```
 
 Example requests are available in the [Postman collection](postman/Product%20Inventory%20API.postman_collection.json)
 
