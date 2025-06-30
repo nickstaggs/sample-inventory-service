@@ -10,7 +10,16 @@ This is a Node.js/Express API for managing products and their inventory, using D
 
 ## API Endpoints
 ### Products
-- `POST /api/products` - Create new product
+- `POST /api/products` - Create new product with optional initial inventory
+  ```typescript
+  interface CreateProductRequest {
+    name: string;
+    description: string;
+    price: number;
+    category: string;
+    initialQuantity?: number; // optional, defaults to 0
+  }
+  ```
 - `GET /api/products` - List all products
 - `GET /api/products/:id` - Get product details
 

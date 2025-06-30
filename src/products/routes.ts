@@ -11,7 +11,8 @@ export default (productService: ProductService) => {
   }));
 
   router.post('/', asyncHandler(async (req, res) => {
-    const newProduct = await productService.createProduct(req.body);
+    const { initialQuantity, ...productData } = req.body;
+    const newProduct = await productService.createProduct(productData, initialQuantity);
     res.status(201).json(newProduct);
   }));
 

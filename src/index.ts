@@ -27,8 +27,8 @@ const productDB = new DynamoDBAdapter<Product>('Products', dynamoDBConfig);
 const inventoryDB = new DynamoDBAdapter<InventoryItem>('Inventory', dynamoDBConfig);
 
 // Initialize services
-const productService = new ProductService(productDB);
 const inventoryService = new InventoryService(inventoryDB);
+const productService = new ProductService(productDB, inventoryService);
 
 app.use(helmet());
 app.use(cors());

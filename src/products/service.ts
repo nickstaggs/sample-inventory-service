@@ -12,7 +12,19 @@ export class ProductService {
     return this.db.get(id);
   }
 
-  async createProduct(productData: Omit<Product, 'id'>): Promise<Product> {
-    return this.db.create(productData);
+  constructor(private db: DatabaseClient<Product>, private inventoryService?: InventoryService) {}
+
+  async createProduct(productData: Omit<Product, 'id'>, initialQuantity: number = 0): Promise<Product> {
+    const product = await this.db.create(productData);
+    
+    if (this.inventoryService && initialQuantity > 0) {
+      await this.inventoryService.updateInventory({
+        productId: product.id,
+        quantity: initialQuantity,
+        location: 'Default Warehouse'
+      });
+    }
+    
+    return product;
   }
 }

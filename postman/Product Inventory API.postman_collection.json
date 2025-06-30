@@ -17,7 +17,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"Sample Product\",\n  \"description\": \"This is a test product\",\n  \"price\": 19.99,\n  \"category\": \"Test\"\n}"
+          "raw": "{\n  \"name\": \"Sample Product\",\n  \"description\": \"This is a test product\",\n  \"price\": 19.99,\n  \"category\": \"Test\",\n  \"initialQuantity\": 100\n}"
         },
         "url": {
           "raw": "http://localhost:3000/api/products",

@@ -55,7 +55,16 @@ npm run init-db
 ## API Documentation
 
 ### Products
-- `POST /api/products` - Create a new product
+- `POST /api/products` - Create a new product (optionally with initial inventory quantity)
+  ```json
+  {
+    "name": "Product Name",
+    "description": "Product description",
+    "price": 19.99,
+    "category": "Category",
+    "initialQuantity": 100  // optional, defaults to 0
+  }
+  ```
 - `GET /api/products` - List all products
 - `GET /api/products/:id` - Get product details
 
