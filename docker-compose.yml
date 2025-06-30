@@ -6,12 +6,15 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - NODE_ENV=development
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_REGION=us-east-1
       - AWS_ENDPOINT=http://localstack:4566
     depends_on:
-      - localstack
+      localstack:
+        condition: service_healthy
+    command: sh -c "npm run init-db && npm start"
 
   localstack:
     image: localstack/localstack
@@ -25,6 +28,11 @@ services:
       - AWS_DEFAULT_REGION=us-east-1
       - EDGE_PORT=4566
       - DEBUG=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
     volumes:
       - ./localstack:/tmp/localstack
       - /var/run/docker.sock:/var/run/docker.sock

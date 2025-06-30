@@ -1,4 +1,4 @@
-import { DynamoDBClient, CreateTableCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, CreateTableCommand, ListTablesCommand } from '@aws-sdk/client-dynamodb';
 
 const client = new DynamoDBClient({
   endpoint: process.env.AWS_ENDPOINT || 'http://localhost:4566',
@@ -29,9 +29,30 @@ async function createTable(tableName: string, key: string) {
   }
 }
 
+async function waitForDynamoDB(client: DynamoDBClient, maxRetries = 5, delay = 1000): Promise<void> {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      await client.send(new ListTablesCommand({}));
+      console.log('DynamoDB is ready');
+      return;
+    } catch (err) {
+      console.log(`Waiting for DynamoDB... (attempt ${i + 1}/${maxRetries})`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  throw new Error('Failed to connect to DynamoDB');
+}
+
 async function initDB() {
-  await createTable('Products', 'id');
-  await createTable('Inventory', 'productId');
+  try {
+    await waitForDynamoDB(client);
+    await createTable('Products', 'id');
+    await createTable('Inventory', 'productId');
+    console.log('Database initialization complete');
+  } catch (err) {
+    console.error('Database initialization failed:', err);
+    process.exit(1);
+  }
 }
 
 initDB();
