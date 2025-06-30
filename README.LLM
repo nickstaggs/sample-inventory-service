@@ -1,0 +1,82 @@
+# Product Inventory API - LLM Assistant Guide
+
+## Application Overview
+This is a Node.js/Express API for managing products and their inventory, using DynamoDB via LocalStack for data storage.
+
+## Key Components
+- **Products**: CRUD operations for product catalog
+- **Inventory**: Track stock levels and locations for products
+- **Database**: DynamoDB tables (`Products` and `Inventory`)
+
+## API Endpoints
+### Products
+- `POST /api/products` - Create new product
+- `GET /api/products` - List all products
+- `GET /api/products/:id` - Get product details
+
+### Inventory
+- `POST /api/inventory` - Update inventory (creates if doesn't exist)
+- `GET /api/inventory/:productId` - Get inventory for product
+
+## Data Models
+### Product
+```typescript
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+### InventoryItem
+```typescript
+interface InventoryItem {
+  id: string;
+  productId: string;
+  quantity: number;
+  location: string;
+  lastUpdated: Date;
+}
+```
+
+## Development Setup
+1. Start services:
+```bash
+docker-compose up
+```
+
+2. Initialize database:
+```bash
+npm run init-db
+```
+
+3. Run in development mode:
+```bash
+npm run dev
+```
+
+## Testing
+Postman collection available at:
+`postman/Product Inventory API.postman_collection.json`
+
+## Key Files
+- `src/index.ts` - Main application entry point
+- `src/products/` - Product-related routes and services
+- `src/inventory/` - Inventory-related routes and services
+- `src/shared/database/dynamodb.ts` - DynamoDB adapter
+- `scripts/init-db.ts` - Database initialization script
+
+## Environment Variables
+- `AWS_ENDPOINT`: LocalStack endpoint (default: http://localhost:4566)
+- `AWS_REGION`: AWS region (default: us-east-1)
+- `AWS_ACCESS_KEY_ID`: AWS access key (default: test)
+- `AWS_SECRET_ACCESS_KEY`: AWS secret key (default: test)
+
+## Common Tasks
+- Adding new product fields: Update `Product` interface and related services
+- Adding inventory features: Extend `InventoryService`
+- Changing database: Implement new `DatabaseClient` adapter
