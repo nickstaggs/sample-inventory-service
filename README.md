@@ -119,6 +119,8 @@ Example requests are available in the [Postman collection](postman/Product%20Inv
 
 | Variable | Description | Default |
 |----------|-------------|---------|
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | OpenTelemetry collector endpoint | `http://localhost:4318` |
+| `OTEL_SERVICE_NAME` | Service name for tracing | `product-inventory-api` |
 | `AWS_ENDPOINT` | LocalStack endpoint | `http://localhost:4566` |
 | `AWS_REGION` | AWS region | `us-east-1` |
 | `AWS_ACCESS_KEY_ID` | AWS access key | `test` |

@@ -1,6 +1,9 @@
 # Use official Node.js image
 FROM node:18-alpine
 
+# Install OpenTelemetry dependencies
+RUN apk add --no-cache python3 make g++
+
 # Create app directory
 WORKDIR /usr/src/app
 

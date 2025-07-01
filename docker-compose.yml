@@ -1,5 +1,20 @@
 services:
+  otel-collector:
+    image: otel/opentelemetry-collector
+    command: ["--config=/etc/otel-config.yaml"]
+    volumes:
+      - ./otel-config.yaml:/etc/otel-config.yaml
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "13133:13133" # Health check extension
+      - "55679:55679" # zPages extension
+
   app:
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_SERVICE_NAME=product-inventory-api
     build: .
     ports:
       - "3000:3000"

@@ -1,6 +1,12 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import { initializeTracing } from "./shared/tracing";
+import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
+
+// Initialize OpenTelemetry
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
+initializeTracing('product-inventory-api');
 import { DynamoDBAdapter } from "./shared/database/dynamodb";
 
 // Configure AWS SDK for LocalStack
