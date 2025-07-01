@@ -118,6 +118,8 @@ Example requests are available in the [Postman collection](postman/Product%20Inv
 
 | Variable | Description | Default |
 |----------|-------------|---------|
+| `REDIS_HOST` | Redis host | `localhost` |
+| `REDIS_PORT` | Redis port | `6379` |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | OpenTelemetry collector endpoint | `http://localhost:4318` |
 | `OTEL_SERVICE_NAME` | Service name for tracing | `product-inventory-api` |
 | `AWS_ENDPOINT` | LocalStack endpoint | `http://localhost:4566` |
