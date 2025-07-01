@@ -118,6 +118,7 @@ Example requests are available in the [Postman collection](postman/Product%20Inv
 
 | Variable | Description | Default |
 |----------|-------------|---------|
+| `PROMETHEUS_ENDPOINT` | Prometheus metrics endpoint | `http://localhost:9090` |
 | `REDIS_HOST` | Redis host | `localhost` |
 | `REDIS_PORT` | Redis port | `6379` |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | OpenTelemetry collector endpoint | `http://localhost:4318` |
