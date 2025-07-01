@@ -77,7 +77,12 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"productId\": \"12345\",\n  \"quantity\": 100,\n  \"location\": \"Warehouse A\"\n}"
+          "raw": "{\n  \"productId\": \"12345\",\n  \"quantity\": 100,\n  \"location\": \"Warehouse A\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
         },
         "url": {
           "raw": "http://localhost:3000/api/inventory",

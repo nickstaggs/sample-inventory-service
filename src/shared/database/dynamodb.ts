@@ -57,17 +57,22 @@ export class DynamoDBAdapter<T extends WithId> implements DatabaseClient<T> {
   }
 
   async update(id: string, item: Partial<T>): Promise<T> {
-    const updates = Object.entries(item)
-      .filter(([_, value]) => value !== undefined)
-      .map(([key, _]) => `${key} = :${key}`)
-      .join(", ");
+    const updates = [];
+    const expressionValues: Record<string, any> = {};
+    const now = new Date().toISOString();
 
-    const expressionValues = Object.entries(item)
-      .filter(([_, value]) => value !== undefined)
-      .reduce((acc, [key, value]) => ({ ...acc, [`:${key}`]: value }), {});
+    for (const [key, value] of Object.entries(item)) {
+      if (value !== undefined) {
+        updates.push(`${key} = :${key}`);
+        expressionValues[`:${key}`] = value;
+      }
+    }
 
-    logger.info(`Updated ${JSON.stringify(item)}`);
-    logger.info(`id = ${id}`);
+    // Always update the updatedAt field
+    updates.push('updatedAt = :updatedAt');
+    expressionValues[':updatedAt'] = now;
+
+    logger.info(`Updating item ${id} with: ${JSON.stringify(item)}`);
 
     const { Attributes } = await this.client.send(
       new UpdateCommand({

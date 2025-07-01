@@ -18,7 +18,19 @@ export default (inventoryService: InventoryService) => {
   router.post(
     "/",
     asyncHandler(async (req, res) => {
-      const newInventory = await inventoryService.updateInventory(req.body);
+      const { productId, quantity, location } = req.body;
+      
+      if (!productId || quantity === undefined || !location) {
+        return res.status(400).json({ 
+          error: 'Missing required fields: productId, quantity, or location' 
+        });
+      }
+
+      const newInventory = await inventoryService.updateInventory({
+        productId,
+        quantity: Number(quantity),
+        location
+      });
       res.status(201).json(newInventory);
     }),
   );
