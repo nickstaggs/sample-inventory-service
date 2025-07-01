@@ -25,10 +25,12 @@ export class InventoryService {
       logger.info(
         `Updating existing inventory for product id ${existing?.productId}`,
       );
-      return this.db.update(existing.id, {
-        ...item,
-        updatedAt: new Date().toISOString()
-      });
+      return this.db.update(
+        { productId: existing.productId },
+        {
+          quantity: item.quantity,
+        },
+      );
     } else {
       return this.db.create(item);
     }

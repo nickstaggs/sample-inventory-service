@@ -12,9 +12,6 @@ services:
       - "55679:55679" # zPages extension
 
   app:
-    environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
-      - OTEL_SERVICE_NAME=product-inventory-api
     build: .
     ports:
       - "3000:3000"
@@ -24,10 +21,12 @@ services:
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_REGION=us-east-1
       - AWS_ENDPOINT=http://localstack:4566
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_SERVICE_NAME=product-inventory-api
     depends_on:
       localstack:
         condition: service_healthy
-    command: sh -c "npm run init-db && npm start"
+    command: sh -c "npm run init-db && npm run start-instrumentation && npm start"
 
   localstack:
     image: localstack/localstack

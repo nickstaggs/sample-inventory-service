@@ -7,6 +7,7 @@
     "start": "node dist/index.js",
     "dev": "ts-node-dev src/index.ts",
     "init-db": "ts-node scripts/init-db.ts",
+    "start-instrumentation" : "ts-node src/instrumentation.ts",
     "dev:start": "npm run init-db && npm start",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix"
@@ -14,7 +15,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.840.0",
     "@aws-sdk/lib-dynamodb": "^3.840.0",
-    "@opentelemetry/api": "^1.8.0",
+    "@opentelemetry/api": "^1.7.0",
     "@opentelemetry/auto-instrumentations-node": "^0.41.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.45.0",
     "@opentelemetry/instrumentation-express": "^0.35.0",
