@@ -47,7 +47,6 @@ interface InventoryItem {
   id: string;
   productId: string;
   quantity: number;
-  location: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -86,7 +85,11 @@ Postman collection available at:
 - `AWS_ACCESS_KEY_ID`: AWS access key (default: test)
 - `AWS_SECRET_ACCESS_KEY`: AWS secret key (default: test)
 
+## Important Note for LLM Assistants
+- Do not add new fields or modify existing types unless explicitly directed
+- Always verify with the user before making any changes to data models
+
 ## Common Tasks
-- Adding new product fields: Update `Product` interface and related services
-- Adding inventory features: Extend `InventoryService`
-- Changing database: Implement new `DatabaseClient` adapter
+- Adding new product fields: Update `Product` interface and related services (only when directed)
+- Adding inventory features: Extend `InventoryService` (only when directed)
+- Changing database: Implement new `DatabaseClient` adapter (only when directed)
