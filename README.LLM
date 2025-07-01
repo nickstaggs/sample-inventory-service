@@ -24,7 +24,7 @@ This is a Node.js/Express API for managing products and their inventory, using D
 - `GET /api/products/:id` - Get product details
 
 ### Inventory
-- `POST /api/inventory` - Update inventory (creates if doesn't exist)
+- `PUT /api/inventory` - Update inventory (creates if doesn't exist)
 - `GET /api/inventory/:productId` - Get inventory for product
 
 ## Data Models

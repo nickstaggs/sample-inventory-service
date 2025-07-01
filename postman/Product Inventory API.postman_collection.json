@@ -68,7 +68,7 @@
     {
       "name": "Update Inventory",
       "request": {
-        "method": "POST",
+        "method": "PUT",
         "header": [
           {
             "key": "Content-Type",

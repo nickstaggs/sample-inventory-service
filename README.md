@@ -80,19 +80,18 @@ npm run dev
   }
   ```
   
-Example inventory update:
+Example inventory update (PUT /api/inventory):
 ```json
 {
-  "productId": "12345",
-  "quantity": 100,
-  "location": "Warehouse A"
+  "productId": "12345", 
+  "quantity": 100
 }
 ```
 - `GET /api/products` - List all products
 - `GET /api/products/:id` - Get product details
 
 ### Inventory
-- `POST /api/inventory` - Update inventory (creates if doesn't exist)
+- `PUT /api/inventory` - Update inventory (creates if doesn't exist)
   ```json
   {
     "productId": "string (required)",
