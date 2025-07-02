@@ -12,20 +12,18 @@ export class CacheService {
   static async get<T>(key: string): Promise<T | null> {
     try {
       const data = await redisClient.get(key);
-      return data ? JSON.parse(data) : null;
+      if (!data) return null;
+      return JSON.parse(data) as T;
     } catch (error) {
       logger.error(`Cache get error for key ${key}: ${error}`);
       return null;
     }
   }
 
-  static async set<T>(
-    key: string,
-    value: T,
-    ttl: number = DEFAULT_TTL,
-  ): Promise<void> {
+  static async set<T>(key: string, value: T, ttl: number = DEFAULT_TTL): Promise<void> {
     try {
-      await redisClient.set(key, JSON.stringify(value), "EX", ttl);
+      const serialized = JSON.stringify(value);
+      await redisClient.set(key, serialized, "EX", ttl);
     } catch (error) {
       logger.error(`Cache set error for key ${key}: ${error}`);
     }
@@ -33,7 +31,10 @@ export class CacheService {
 
   static async invalidate(key: string): Promise<void> {
     try {
-      await redisClient.del(key);
+      const result = await redisClient.del(key);
+      if (result === 0) {
+        logger.warn(`Cache key ${key} not found during invalidation`);
+      }
     } catch (error) {
       logger.error(`Cache invalidation error for key ${key}: ${error}`);
     }

@@ -15,51 +15,53 @@ const client = new DynamoDBClient({
 });
 
 async function createTable(tableName: string, key: string) {
-  const command = new CreateTableCommand({
-    TableName: tableName,
-    KeySchema: [{ AttributeName: key, KeyType: "HASH" }],
-    AttributeDefinitions: [{ AttributeName: key, AttributeType: "S" }],
-    BillingMode: "PAY_PER_REQUEST",
-  });
-
   try {
+    const command = new CreateTableCommand({
+      TableName: tableName,
+      KeySchema: [{ AttributeName: key, KeyType: "HASH" }],
+      AttributeDefinitions: [{ AttributeName: key, AttributeType: "S" }],
+      BillingMode: "PAY_PER_REQUEST",
+    });
+
     await client.send(command);
     logger.info(`Created table ${tableName}`);
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      logger.error(err.message);
+  } catch (error) {
+    if (error instanceof Error) {
+      logger.error(`Error creating table ${tableName}: ${error.message}`);
     } else {
-      logger.error(`${err}`);
+      logger.error(`Unknown error creating table ${tableName}`);
     }
+    throw error;
   }
 }
 
-async function waitForDynamoDB(
-  client: DynamoDBClient,
-  maxRetries = 5,
-  delay = 1000,
-): Promise<void> {
-  for (let i = 0; i < maxRetries; i++) {
+async function waitForDynamoDB(client: DynamoDBClient, maxRetries = 5, delay = 1000): Promise<void> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       await client.send(new ListTablesCommand({}));
       logger.info("DynamoDB is ready");
       return;
-    } catch (err) {
-      logger.info(`Waiting for DynamoDB... (attempt ${i + 1}/${maxRetries})`);
-      await new Promise((resolve) => setTimeout(resolve, delay));
+    } catch (error) {
+      logger.info(`Waiting for DynamoDB... (attempt ${attempt}/${maxRetries})`);
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
-  throw new Error("Failed to connect to DynamoDB");
+  throw new Error("Failed to connect to DynamoDB after multiple attempts");
 }
 
 async function initDB() {
   try {
+    logger.info("Starting database initialization");
     await waitForDynamoDB(client);
-    await createTable("Products", "id");
-    await createTable("Inventory", "productId");
-    logger.info("Database initialization complete");
-  } catch (err) {
-    logger.error(`Database initialization failed: ${err}`);
+    
+    await Promise.all([
+      createTable("Products", "id"),
+      createTable("Inventory", "productId")
+    ]);
+    
+    logger.info("Database initialization completed successfully");
+  } catch (error) {
+    logger.error(`Database initialization failed: ${error}`);
     process.exit(1);
   }
 }

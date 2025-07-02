@@ -19,29 +19,44 @@ export class ProductService {
     productData: Omit<Product, "id" | "createdAt" | "updatedAt">,
     initialQuantity: number = 0,
   ): Promise<Product> {
-    const product = await this.db.create(productData);
+    try {
+      const product = await this.db.create(productData);
+      
+      await this.inventoryService.updateInventory({
+        productId: product.id,
+        quantity: initialQuantity,
+      });
 
-    await this.inventoryService.updateInventory({
-      productId: product.id,
-      quantity: initialQuantity,
-    });
-
-    return product;
+      return product;
+    } catch (error) {
+      logger.error(`Failed to create product: ${error}`);
+      throw error;
+    }
   }
 
   async getAllProducts(): Promise<Product[]> {
-    return await this.db.getAll();
+    try {
+      return await this.db.getAll();
+    } catch (error) {
+      logger.error(`Failed to get all products: ${error}`);
+      throw error;
+    }
   }
 
   async getProductById(id: string): Promise<Product | undefined> {
-    const cacheKey = this.getCacheKey(id);
-    const cached = await CacheService.get<Product>(cacheKey);
-    if (cached) return cached;
+    try {
+      const cacheKey = this.getCacheKey(id);
+      const cached = await CacheService.get<Product>(cacheKey);
+      if (cached) return cached;
 
-    const product = await this.db.get(id);
-    if (product) {
-      await CacheService.set(cacheKey, product, PRODUCT_CACHE_TTL);
+      const product = await this.db.get(id);
+      if (product) {
+        await CacheService.set(cacheKey, product, PRODUCT_CACHE_TTL);
+      }
+      return product;
+    } catch (error) {
+      logger.error(`Failed to get product by id ${id}: ${error}`);
+      throw error;
     }
-    return product;
   }
 }

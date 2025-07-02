@@ -22,38 +22,51 @@ export class DynamoDBAdapter<T extends WithId> implements DatabaseClient<T> {
   }
 
   async get(id: string): Promise<T | undefined> {
-    const { Item } = await this.client.send(
-      new GetCommand({
+    try {
+      const command = new GetCommand({
         TableName: this.tableName,
         Key: { id },
-      }),
-    );
-    return Item as T | undefined;
+      });
+      const { Item } = await this.client.send(command);
+      return Item as T | undefined;
+    } catch (error) {
+      logger.error(`Failed to get item ${id}: ${error}`);
+      throw error;
+    }
   }
 
   async getAll(): Promise<T[]> {
-    const { Items } = await this.client.send(
-      new ScanCommand({
+    try {
+      const command = new ScanCommand({
         TableName: this.tableName,
-      }),
-    );
-    return (Items as T[]) || [];
+      });
+      const { Items } = await this.client.send(command);
+      return (Items as T[]) || [];
+    } catch (error) {
+      logger.error(`Failed to get all items: ${error}`);
+      throw error;
+    }
   }
 
   async create(item: Omit<T, "id" | "createdAt" | "updatedAt">): Promise<T> {
-    const newItem = {
-      ...item,
-      id: uuidv4(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    } as unknown as T;
-    await this.client.send(
-      new PutCommand({
+    try {
+      const newItem = {
+        ...item,
+        id: uuidv4(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      } as unknown as T;
+      
+      const command = new PutCommand({
         TableName: this.tableName,
         Item: newItem,
-      }),
-    );
-    return newItem;
+      });
+      await this.client.send(command);
+      return newItem;
+    } catch (error) {
+      logger.error(`Failed to create item: ${error}`);
+      throw error;
+    }
   }
 
   async update(id: Record<string, string>, item: Partial<T>): Promise<T> {
