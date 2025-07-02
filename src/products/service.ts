@@ -30,13 +30,7 @@ export class ProductService {
   }
 
   async getAllProducts(): Promise<Product[]> {
-    const cacheKey = 'products:all';
-    const cached = await CacheService.get<Product[]>(cacheKey);
-    if (cached) return cached;
-
-    const products = await this.db.getAll();
-    await CacheService.set(cacheKey, products, PRODUCT_CACHE_TTL);
-    return products;
+    return await this.db.getAll();
   }
 
   async getProductById(id: string): Promise<Product | undefined> {

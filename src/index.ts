@@ -1,13 +1,14 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import { initializeTracing } from "./shared/tracing";
-import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
-
-// Initialize OpenTelemetry
-diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
-initializeTracing('product-inventory-api');
 import { DynamoDBAdapter } from "./shared/database/dynamodb";
+import { Product } from "./shared/types";
+import { InventoryItem } from "./shared/types";
+import { ProductService } from "./products/service";
+import { InventoryService } from "./inventory/service";
+import productRoutes from "./products/routes";
+import inventoryRoutes from "./inventory/routes";
+import { logger } from "./shared/logger";
 
 // Configure AWS SDK for LocalStack
 const dynamoDBConfig = {
@@ -18,12 +19,6 @@ const dynamoDBConfig = {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "test",
   },
 };
-import { Product } from "./shared/types";
-import { InventoryItem } from "./shared/types";
-import { ProductService } from "./products/service";
-import { InventoryService } from "./inventory/service";
-import productRoutes from "./products/routes";
-import inventoryRoutes from "./inventory/routes";
 
 const app = express();
 const PORT = 3000;
@@ -48,5 +43,5 @@ app.use("/api/products", productRoutes(productService));
 app.use("/api/inventory", inventoryRoutes(inventoryService));
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  logger.info(`Server running on http://localhost:${PORT}`);
 });

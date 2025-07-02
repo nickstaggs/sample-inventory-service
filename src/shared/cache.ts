@@ -1,9 +1,9 @@
-import Redis from 'ioredis';
-import { logger } from './logger';
+import Redis from "ioredis";
+import { logger } from "./logger";
 
 const redisClient = new Redis({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
+  host: process.env.REDIS_HOST || "localhost",
+  port: parseInt(process.env.REDIS_PORT || "6379"),
 });
 
 const DEFAULT_TTL = 3600; // 1 hour cache time
@@ -19,9 +19,13 @@ export class CacheService {
     }
   }
 
-  static async set<T>(key: string, value: T, ttl: number = DEFAULT_TTL): Promise<void> {
+  static async set<T>(
+    key: string,
+    value: T,
+    ttl: number = DEFAULT_TTL,
+  ): Promise<void> {
     try {
-      await redisClient.set(key, JSON.stringify(value), 'EX', ttl);
+      await redisClient.set(key, JSON.stringify(value), "EX", ttl);
     } catch (error) {
       logger.error(`Cache set error for key ${key}: ${error}`);
     }

@@ -15,23 +15,22 @@ export default (inventoryService: InventoryService) => {
     }),
   );
 
-  router.post(
+  router.put(
     "/",
     asyncHandler(async (req, res) => {
-      const { productId, quantity, location } = req.body;
-      
-      if (!productId || quantity === undefined || !location) {
-        return res.status(400).json({ 
-          error: 'Missing required fields: productId, quantity, or location' 
+      const { productId, quantity } = req.body;
+
+      if (!productId || !quantity) {
+        return res.status(400).json({
+          error: "Missing required fields: productId, or quantity",
         });
       }
 
-      const newInventory = await inventoryService.updateInventory({
+      const updatedInventory = await inventoryService.updateInventory({
         productId,
         quantity: Number(quantity),
-        location
       });
-      res.status(201).json(newInventory);
+      res.status(200).json(updatedInventory);
     }),
   );
 

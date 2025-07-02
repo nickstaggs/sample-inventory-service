@@ -1,48 +1,47 @@
-import winston from 'winston';
-import { SeverityNumber } from '@opentelemetry/api-logs';
-import { logs, SeverityNumber } from '@opentelemetry/api-logs';
+import winston from "winston";
+import { logs, SeverityNumber } from "@opentelemetry/api-logs";
 
 const loggerProvider = logs.getLoggerProvider();
-const otelLogger = loggerProvider.getLogger('default');
+const otelLogger = loggerProvider.getLogger("default");
 
 const winstonLogger = winston.createLogger({
-  level: 'info',
+  level: "info",
   format: winston.format.combine(
     winston.format.timestamp(),
-    winston.format.json()
+    winston.format.json(),
   ),
   transports: [
     new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/combined.log' })
-  ]
+    new winston.transports.File({ filename: "logs/combined.log" }),
+  ],
 });
 
 export const logger = {
-  info: (message: string, metadata?: Record<string, unknown>) => {
+  info: (message: string, metadata?: Record<string, string>) => {
     winstonLogger.info(message, metadata);
     otelLogger.emit({
       severityNumber: SeverityNumber.INFO,
-      severityText: 'INFO',
+      severityText: "INFO",
       body: message,
-      attributes: metadata
+      attributes: metadata,
     });
   },
-  error: (message: string, metadata?: Record<string, unknown>) => {
+  error: (message: string, metadata?: Record<string, string>) => {
     winstonLogger.error(message, metadata);
     otelLogger.emit({
       severityNumber: SeverityNumber.ERROR,
-      severityText: 'ERROR',
+      severityText: "ERROR",
       body: message,
-      attributes: metadata
+      attributes: metadata,
     });
   },
-  warn: (message: string, metadata?: Record<string, unknown>) => {
+  warn: (message: string, metadata?: Record<string, string>) => {
     winstonLogger.warn(message, metadata);
     otelLogger.emit({
       severityNumber: SeverityNumber.WARN,
-      severityText: 'WARN',
+      severityText: "WARN",
       body: message,
-      attributes: metadata
+      attributes: metadata,
     });
-  }
+  },
 };

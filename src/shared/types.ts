@@ -12,7 +12,6 @@ export interface InventoryItem extends WithId, WithAuditFields {
   id: string;
   productId: string;
   quantity: number;
-  location: string;
   createdAt: string;
   updatedAt: string;
 }

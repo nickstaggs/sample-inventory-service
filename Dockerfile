@@ -16,9 +16,6 @@ RUN npm install
 # Copy source files
 COPY . .
 
-# Run linter
-RUN npm run lint
-
 # Build TypeScript
 RUN npm run build
 

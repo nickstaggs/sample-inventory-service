@@ -44,8 +44,8 @@ export class DynamoDBAdapter<T extends WithId> implements DatabaseClient<T> {
     const newItem = {
       ...item,
       id: uuidv4(),
-      createdAt: Date.now().toString(),
-      updatedAt: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     } as unknown as T;
     await this.client.send(
       new PutCommand({
@@ -56,7 +56,7 @@ export class DynamoDBAdapter<T extends WithId> implements DatabaseClient<T> {
     return newItem;
   }
 
-  async update(id: string, item: Partial<T>): Promise<T> {
+  async update(id: Record<string, string>, item: Partial<T>): Promise<T> {
     const updates = [];
     const expressionValues: Record<string, any> = {};
     const now = new Date().toISOString();
@@ -69,15 +69,15 @@ export class DynamoDBAdapter<T extends WithId> implements DatabaseClient<T> {
     }
 
     // Always update the updatedAt field
-    updates.push('updatedAt = :updatedAt');
-    expressionValues[':updatedAt'] = now;
+    updates.push("updatedAt = :updatedAt");
+    expressionValues[":updatedAt"] = now;
 
     logger.info(`Updating item ${id} with: ${JSON.stringify(item)}`);
 
     const { Attributes } = await this.client.send(
       new UpdateCommand({
         TableName: this.tableName,
-        Key: { id },
+        Key: id,
         UpdateExpression: `set ${updates}`,
         ExpressionAttributeValues: expressionValues,
         ReturnValues: "ALL_NEW",
