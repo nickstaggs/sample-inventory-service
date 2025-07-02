@@ -3,12 +3,13 @@ import cors from "cors";
 import helmet from "helmet";
 import { DynamoDBAdapter } from "./shared/database/dynamodb";
 import { Product } from "./shared/types";
-import { InventoryItem } from "./shared/types";
+import { Inventory } from "./shared/types";
 import { ProductService } from "./products/service";
 import { InventoryService } from "./inventory/service";
 import productRoutes from "./products/routes";
 import inventoryRoutes from "./inventory/routes";
 import { logger } from "./shared/logger";
+import { collectDefaultMetrics, Registry } from 'prom-client';
 
 // Configure AWS SDK for LocalStack
 const dynamoDBConfig = {
@@ -23,9 +24,12 @@ const dynamoDBConfig = {
 const app = express();
 const PORT = 3000;
 
+const register = new Registry();
+collectDefaultMetrics({ register });
+
 // Initialize database adapters with LocalStack config
 const productDB = new DynamoDBAdapter<Product>("Products", dynamoDBConfig);
-const inventoryDB = new DynamoDBAdapter<InventoryItem>(
+const inventoryDB = new DynamoDBAdapter<Inventory>(
   "Inventory",
   dynamoDBConfig,
 );
@@ -41,6 +45,11 @@ app.use(express.json());
 // Inject services into routes
 app.use("/api/products", productRoutes(productService));
 app.use("/api/inventory", inventoryRoutes(inventoryService));
+
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
 
 app.listen(PORT, () => {
   logger.info(`Server running on http://localhost:${PORT}`);

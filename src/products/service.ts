@@ -2,6 +2,7 @@ import { Product } from "../shared/types";
 import { DatabaseClient } from "../shared/database.interface";
 import { InventoryService } from "../inventory/service";
 import { CacheService } from "../shared/cache";
+import {logger} from "../shared/logger";
 
 const PRODUCT_CACHE_TTL = 1800; // 30 minutes
 

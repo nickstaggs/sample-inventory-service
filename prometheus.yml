@@ -7,3 +7,7 @@ scrape_configs:
     static_configs:
       - targets: ['otel-collector:8888']
     metrics_path: '/metrics'
+  - job_name: 'node-app'
+    static_configs:
+      - targets: [ 'app:3000' ]
+    metrics_path: '/metrics'

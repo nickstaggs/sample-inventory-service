@@ -11,17 +11,21 @@ processors:
 
 exporters:
   prometheus:
-    endpoint: otel-collector:8888
+    endpoint: otelcol:8888
   otlp:
-    endpoint: otel-collector:4317
+    endpoint: otelcol:4317
   debug:
+  jaeger:
+    endpoint: "http://jaeger:14250"
+    tls:
+      insecure: true
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug]
+      exporters: [debug, jaeger]
     metrics:
       receivers: [otlp]
       processors: [batch]

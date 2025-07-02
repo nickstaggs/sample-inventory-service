@@ -1,4 +1,4 @@
-import { InventoryItem } from "../shared/types";
+import { Inventory } from "../shared/types";
 import { DatabaseClient } from "../shared/database.interface";
 import { logger } from "../shared/logger";
 import { CacheService } from "../shared/cache";
@@ -6,7 +6,7 @@ import { CacheService } from "../shared/cache";
 const INVENTORY_CACHE_TTL = 900; // 15 minutes
 
 export class InventoryService {
-  constructor(private db: DatabaseClient<InventoryItem>) {}
+  constructor(private db: DatabaseClient<Inventory>) {}
 
   private getCacheKey(productId: string): string {
     return `inventory:${productId}`;
@@ -14,9 +14,9 @@ export class InventoryService {
 
   async getInventoryForProduct(
     productId: string,
-  ): Promise<InventoryItem | undefined> {
+  ): Promise<Inventory | undefined> {
     const cacheKey = this.getCacheKey(productId);
-    const cached = await CacheService.get<InventoryItem>(cacheKey);
+    const cached = await CacheService.get<Inventory>(cacheKey);
     if (cached) return cached;
 
     const items = await this.db.getAll();
@@ -28,8 +28,8 @@ export class InventoryService {
   }
 
   async updateInventory(
-    item: Omit<InventoryItem, "id" | "createdAt" | "updatedAt">,
-  ): Promise<InventoryItem> {
+    item: Omit<Inventory, "id" | "createdAt" | "updatedAt">,
+  ): Promise<Inventory> {
     const existing = await this.getInventoryForProduct(item.productId);
 
     logger.info(
@@ -40,14 +40,23 @@ export class InventoryService {
       logger.info(
         `Updating existing inventory for product id ${existing?.productId}`,
       );
-      return this.db.update(
+      const inventory = await this.db.update(
         { productId: existing.productId },
         {
           quantity: item.quantity,
         },
       );
+      const cacheKey = this.getCacheKey(existing.productId);
+      await CacheService.set(cacheKey, inventory, INVENTORY_CACHE_TTL);
+
+      return inventory;
     } else {
-      return this.db.create(item);
+      const inventory = await this.db.create(item);
+
+      const cacheKey = this.getCacheKey(inventory.productId);
+      await CacheService.set(cacheKey, inventory, INVENTORY_CACHE_TTL);
+
+      return inventory;
     }
   }
 }

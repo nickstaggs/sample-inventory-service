@@ -8,7 +8,7 @@ export interface Product extends WithId, WithAuditFields {
   updatedAt: string;
 }
 
-export interface InventoryItem extends WithId, WithAuditFields {
+export interface Inventory extends WithId, WithAuditFields {
   id: string;
   productId: string;
   quantity: number;
