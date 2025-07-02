@@ -68,12 +68,14 @@ npm run dev
 
 ## API Documentation
 
-### Health Check
-- `GET /ping` - Simple health check endpoint
-  Returns:
+### Tracing Test Endpoint
+- `GET /ping` - Simple endpoint to test tracing functionality
+  - Verifies OpenTelemetry tracing is working
+  - Returns:
   ```text
   pong
   ```
+  - Creates a short span (50ms) to demonstrate tracing
 
 ### Products
 - `POST /api/products` - Create a new product (optionally with initial inventory quantity)

@@ -9,8 +9,11 @@ This is a Node.js/Express API for managing products and their inventory, using D
 - **Database**: DynamoDB tables (`Products` and `Inventory`)
 
 ## API Endpoints
-### Health Check
-- `GET /ping` - Service health check
+### Tracing Test
+- `GET /ping` - Endpoint specifically for testing OpenTelemetry tracing
+  - Creates a test span to verify tracing is working
+  - Returns simple "pong" response
+  - Not meant for production health checks
 
 ### Products
 - `POST /api/products` - Create new product with optional initial inventory

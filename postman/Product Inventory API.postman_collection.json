@@ -6,7 +6,7 @@
   },
   "item": [
     {
-      "name": "Health Check",
+      "name": "Tracing Test Endpoint",
       "request": {
         "method": "GET",
         "header": [],
@@ -18,7 +18,8 @@
           "path": ["ping"]
         }
       },
-      "response": []
+      "response": [],
+      "description": "This endpoint exists solely to test OpenTelemetry tracing functionality. It creates a short span (50ms) and returns 'pong'. Use this to verify tracing is working properly before testing other endpoints."
     },
     {
       "name": "Create Product",
