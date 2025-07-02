@@ -68,6 +68,13 @@ npm run dev
 
 ## API Documentation
 
+### Health Check
+- `GET /ping` - Simple health check endpoint
+  Returns:
+  ```text
+  pong
+  ```
+
 ### Products
 - `POST /api/products` - Create a new product (optionally with initial inventory quantity)
   ```json

@@ -9,6 +9,9 @@ This is a Node.js/Express API for managing products and their inventory, using D
 - **Database**: DynamoDB tables (`Products` and `Inventory`)
 
 ## API Endpoints
+### Health Check
+- `GET /ping` - Service health check
+
 ### Products
 - `POST /api/products` - Create new product with optional initial inventory
   ```typescript
@@ -28,27 +31,27 @@ This is a Node.js/Express API for managing products and their inventory, using D
 - `GET /api/inventory/:productId` - Get inventory for product
 
 ## Data Models
-### Product
+### Core Types
 ```typescript
-interface Product {
+interface WithId {
   id: string;
+}
+
+interface WithAuditFields {
+  createdAt: string;  // ISO-8601 format
+  updatedAt: string;  // ISO-8601 format
+}
+
+interface Product extends WithId, WithAuditFields {
   name: string;
   description: string;
-  price: number;
+  price: number;      // Floating point number
   category: string;
-  createdAt: string;
-  updatedAt: string;
 }
-```
 
-### InventoryItem
-```typescript
-interface InventoryItem {
-  id: string;
-  productId: string;
-  quantity: number;
-  createdAt: string;
-  updatedAt: string;
+interface Inventory extends WithId, WithAuditFields {
+  productId: string;  // References Product.id
+  quantity: number;   // Integer count
 }
 ```
 
