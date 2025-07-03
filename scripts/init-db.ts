@@ -62,7 +62,6 @@ async function initDB() {
     logger.info("Database initialization completed successfully");
   } catch (error) {
     logger.error(`Database initialization failed: ${error}`);
-    process.exit(1);
   }
 }
 

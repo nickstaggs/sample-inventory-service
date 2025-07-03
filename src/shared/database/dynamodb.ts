@@ -56,7 +56,7 @@ export class DynamoDBAdapter<T extends WithId> implements DatabaseClient<T> {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       } as unknown as T;
-      
+
       const command = new PutCommand({
         TableName: this.tableName,
         Item: newItem,

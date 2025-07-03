@@ -1,3 +1,4 @@
+import "./instrumentation";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -9,7 +10,8 @@ import { InventoryService } from "./inventory/service";
 import productRoutes from "./products/routes";
 import inventoryRoutes from "./inventory/routes";
 import { logger } from "./shared/logger";
-import { collectDefaultMetrics, Registry } from 'prom-client';
+import { collectDefaultMetrics, Registry } from "prom-client";
+import { trace } from "@opentelemetry/api";
 
 // Configure AWS SDK for LocalStack
 const dynamoDBConfig = {
@@ -21,18 +23,15 @@ const dynamoDBConfig = {
   },
 };
 
-const app = express();
-const PORT = 3000;
-
 const register = new Registry();
 collectDefaultMetrics({ register });
 
+const app = express();
+const PORT = 3000;
+
 // Initialize database adapters with LocalStack config
 const productDB = new DynamoDBAdapter<Product>("Products", dynamoDBConfig);
-const inventoryDB = new DynamoDBAdapter<Inventory>(
-  "Inventory",
-  dynamoDBConfig,
-);
+const inventoryDB = new DynamoDBAdapter<Inventory>("Inventory", dynamoDBConfig);
 
 // Initialize services
 const inventoryService = new InventoryService(inventoryDB);
@@ -46,9 +45,17 @@ app.use(express.json());
 app.use("/api/products", productRoutes(productService));
 app.use("/api/inventory", inventoryRoutes(inventoryService));
 
-app.get('/metrics', async (req, res) => {
-  res.set('Content-Type', register.contentType);
+app.get("/metrics", async (req, res) => {
+  res.set("Content-Type", register.contentType);
   res.end(await register.metrics());
+});
+
+app.get("/ping", (req, res) => {
+  const span = trace.getTracer("default").startSpan("ping-handler");
+
+  logger.info(`Active span: ${span?.spanContext()?.spanId}`);
+  span.end();
+  res.send("pong");
 });
 
 app.listen(PORT, () => {

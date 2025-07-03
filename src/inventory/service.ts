@@ -32,10 +32,6 @@ export class InventoryService {
   ): Promise<Inventory> {
     const existing = await this.getInventoryForProduct(item.productId);
 
-    logger.info(
-      `Updated inventory for ${item.productId} with id ${existing?.id} ${existing?.productId} ${existing?.quantity}`,
-    );
-
     if (existing) {
       logger.info(
         `Updating existing inventory for product id ${existing?.productId}`,

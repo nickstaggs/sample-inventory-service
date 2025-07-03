@@ -1,6 +1,6 @@
 import winston from "winston";
 import { logs, SeverityNumber } from "@opentelemetry/api-logs";
-import { context, trace } from '@opentelemetry/api';
+import { context, trace } from "@opentelemetry/api";
 
 const loggerProvider = logs.getLoggerProvider();
 const otelLogger = loggerProvider.getLogger("default");
@@ -22,7 +22,7 @@ export const logger = {
     const span = trace.getSpan(context.active());
     const traceId = span?.spanContext().traceId;
     if (traceId && metadata) {
-      metadata['traceId'] = traceId;
+      metadata["traceId"] = traceId;
     }
     winstonLogger.info(message, metadata);
     otelLogger.emit({
@@ -36,7 +36,7 @@ export const logger = {
     const span = trace.getSpan(context.active());
     const traceId = span?.spanContext().traceId;
     if (traceId && metadata) {
-      metadata['traceId'] = traceId;
+      metadata["traceId"] = traceId;
     }
     winstonLogger.error(message, metadata);
     otelLogger.emit({
@@ -50,7 +50,7 @@ export const logger = {
     const span = trace.getSpan(context.active());
     const traceId = span?.spanContext().traceId;
     if (traceId && metadata) {
-      metadata['traceId'] = traceId;
+      metadata["traceId"] = traceId;
     }
     winstonLogger.warn(message, metadata);
     otelLogger.emit({

@@ -20,6 +20,9 @@ services:
       - "8888:8888"   # Prometheus metrics exposed by the collector
       - "13133:13133" # Health check extension
       - "55679:55679" # zPages extension
+    depends_on:
+      jaeger:
+        condition: service_healthy
 
   prometheus:
     image: prom/prometheus
@@ -29,6 +32,8 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
       - otel-collector
+
+
 
   app:
     build: .
@@ -42,7 +47,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_REGION=us-east-1
       - AWS_ENDPOINT=http://localstack:4566
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
       - OTEL_SERVICE_NAME=product-inventory-api
     depends_on:
       localstack:
@@ -71,6 +76,14 @@ services:
 
   jaeger:
     image: jaegertracing/all-in-one:latest
+    container_name: jaeger
     ports:
       - "16686:16686"  # UI
       - "14250:14250"  # gRPC
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:16686" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10

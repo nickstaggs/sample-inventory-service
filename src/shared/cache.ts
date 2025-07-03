@@ -20,7 +20,11 @@ export class CacheService {
     }
   }
 
-  static async set<T>(key: string, value: T, ttl: number = DEFAULT_TTL): Promise<void> {
+  static async set<T>(
+    key: string,
+    value: T,
+    ttl: number = DEFAULT_TTL,
+  ): Promise<void> {
     try {
       const serialized = JSON.stringify(value);
       await redisClient.set(key, serialized, "EX", ttl);
